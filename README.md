@@ -39,6 +39,7 @@ After converting the image to Black&White, it should look similar to the followi
 The first thing we need to do with the black&white license plate is to remove the border around it. This allows us to reduce the amount of information that we will have to process. To remove the border, we start from the left side of the image. We observe that the left border is made up of contiguous black pixels and the first white pixel indicates the end of the border. This is a trivial observation but nonetheless important for our purposes. We take the image and start at the left most part of each row. Start by looking for the first black pixel.
 
 Consider the following picture (zoomed in) of the top-left corner of a license plate:
+
 ![Top left corner of the license plate](sample00TopLeft.jpg)
 
 We start from the top row of the image and iterate horizontally through each column of this row and wait for the first black pixel. When we see the first black pixel, we set its value to white and after that every black pixel is changed to white until a white pixel is encountered. This white pixel would indicate the end of border. If we continue this process for the entire image, our results looks like the following:
@@ -171,23 +172,17 @@ Also notice that several quadrants have very similar percentages for different d
 
 Let's work an example. Assume that for a given digit, our values for Q1, Q2, Q3, and Q4 are 0.12, 0.28, 0.42, 0.54. Then for Digit 0, the absolute difference between corresponding quadrants is 0.37, 0.23, 0.1, 0.06, with a total difference equal to 0.37/4 + 0.23/4 + 0.1/4 + 0.06/4 = 0.19. Similarly, for Digit 4 we get values 0.04, 0.00, 0.01, 0.02 with an overall difference of 0.0175. When we get these overall difference values for all 10 digits, we can search for the smallest difference and that is our estimate for this particular digit.
 
-Task 5 Write a function decodeCharacter(pic, startrow, endrow, startcol, endcol) that will take a pic as input parameter and decode the number bounded the rectangle represented by startrow, endrow, startcol, and endcol.
+`decodeCharacter(pic, startrow, endrow, startcol, endcol)` is the function that will take a pic as input parameter and decode the number bounded the rectangle represented by startrow, endrow, startcol, and endcol.
 
-Putting it all together
-Task 6 Write a function called decodeLicensePlate(filename) that will take a filename of a license plate image as input. The function should then load the image represented by filename and should return a string that represents the number on the license plate.
+##### Subtask 06 | Putting it all together
+`decodeLicensePlate(filename)` is the function that will take a filename of a license plate image as input. The function should then load the image represented by filename and should return a string that represents the number on the license plate.
 
 The decode license plate function should follow these steps:
 
-Load the image
-
-Convert the image to black and white
-
-Remove the border
-
-Remove the text blob on the left side
-
-horizontal segmentation
-
-vertical segmentation
-
-Decode each character from horizontal and vertical segmentation and build a list
+1. Load the image
+2. Convert the image to black and white
+3. Remove the border
+4. Remove the text blob on the left side
+5. horizontal segmentation
+6. vertical segmentation
+7. Decode each character from horizontal and vertical segmentation and build a list
