@@ -8,7 +8,8 @@ As traffic accidents increase due to over speeding and other traffic violations,
 
 My task, in this repo, is to take an image of a license plate and programmatically (by writing a computer program) determine the license plate number.
 
-This homework needs the ImageWriter Library that uses 'OpenCV' [the library can be found in the files]. 
+This repo needs the ImageWriter Library that uses 'OpenCV' [the library can be found in the files]. 
+[Here are some sample images of license plate](samples.zip)
 
 ##### Subtask 00 | Normalization
 Before we can start processing a license plate, it is important for us to reduce the number of colors in the image. This process of color reduction is called normalization and we can do this by converting the image to black and white. This process helps us reduce the amount of information that we have to process. So the first step is to convert this colored image to a black and white image. We take each pixel of the image and if the average proportion of all three values: R, G and B is less than some arbitary value (e.g., 85 or 100), we set the colors to 0 otherwise we set each component to 255.
@@ -32,7 +33,7 @@ Here is an image of a Qatari license plate without any processing
 
 After converting the image to Black&White, it should look similar to the following image
 
-![After converting the image to Black and White](sapmle00BW.jpg)
+![After converting the image to Black and White](sample00BW.jpg)
 
 ##### Subtask 01 | Remove Border
 
