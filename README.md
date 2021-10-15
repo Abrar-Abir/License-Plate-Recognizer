@@ -10,8 +10,7 @@ My task, in this repo, is to take an image of a license plate and programmatical
 
 This homework needs the ImageWriter Library that uses 'OpenCV' [the library can be found in the files]. 
 
-##### Subtask 00
-###### Normalization
+##### Subtask 00 | Normalization
 Before we can start processing a license plate, it is important for us to reduce the number of colors in the image. This process of color reduction is called normalization and we can do this by converting the image to black and white. This process helps us reduce the amount of information that we have to process. So the first step is to convert this colored image to a black and white image. We take each pixel of the image and if the average proportion of all three values: R, G and B is less than some arbitary value (e.g., 85 or 100), we set the colors to 0 otherwise we set each component to 255.
 
 The following function is used to convert a picture to black and white:
@@ -33,25 +32,29 @@ Here is an image of a Qatari license plate without any processing
 
 After converting the image to Black&White, it should look similar to the following image
 
- After converting the image to Black and White
+![After converting the image to Black and White](sapmle00BW.jpg)
 
-Remove Border
+##### Subtask 01 | Remove Border
+
 The first thing we need to do with the black&white license plate is to remove the border around it. This allows us to reduce the amount of information that we will have to process. To remove the border, we start from the left side of the image. We observe that the left border is made up of contiguous black pixels and the first white pixel indicates the end of the border. This is a trivial observation but nonetheless important for our purposes. We take the image and start at the left most part of each row. Start by looking for the first black pixel.
 
 Consider the following picture (zoomed in) of the top-left corner of a license plate:
- Top left corner of the license plate
+![Top left corner of the license plate](sample00TopLeft.jpg)
 
 We start from the top row of the image and iterate horizontally through each column of this row and wait for the first black pixel. When we see the first black pixel, we set its value to white and after that every black pixel is changed to white until a white pixel is encountered. This white pixel would indicate the end of border. If we continue this process for the entire image, our results looks like the following:
- License plate with border removed from left side
+
+![License plate with border removed from left side](sample00Rborder.jpg)
 
 Notice that we still have the border on the right side leftover. This is because in the previous step, we started looking at the black pixel from left corner which ignored those black pixels that are on the right side. To remove this bit of pattern, we use a similar technique but start from the right side. So start looking at the pixels from the right most edge of the image and iterate backwards. The first contiguous set of black pixels should be converted to white. This results in the following:
- Image of the license plate with borders removed
 
-Task 1 Write a function called removeBorder(pic) that takes a picture as input and removes the border from the picture. The function should not return anything.
+![Image of the license plate with borders removed](sample00NoBorder.jpg)
 
-Remove Text on the Left
+`removeBorder(pic)` is the function that takes a picture as input and removes the border from the picture. The function does not return anything.
+
+##### Subtask 02 | Remove Text on the Left
+
 We notice in the last image of the previous section that we have some text on the left side that says Qatar. This needs to be removed for us to be able to locate the numbers on the license plate. Removing this text is similar to removing the border and we approach it in two steps: In the first step, we find out the location of the start and end of this blob of text. We use the following algorithm to do that:
-
+```
 # Find a vertical blob between
 # startRow and endRow Starting at inital Column initColumn
    x := initColumn
@@ -84,30 +87,35 @@ We notice in the last image of the previous section that we have some text on th
 
  # At this point startX is the start of column of the blob
  # and endX is the end column of the blob.
+```
+
 Once we have found the start and end of the text, we need to set all the pixels there to White. We do that by calling a function that does that.
-
-Task 2 Write a function called findVerticalBlob(pic,startRow, endRow, startColumn). This function returns startX and endX as a list as defined in the algorithm above.
-
-Task 3 Write a function called removeColor(pic, startx, starty, endx, endy) that will set all pixels from rows starty to endy and columns startx to endx to white.
+`findVerticalBlob(pic,startRow, endRow, startColumn)` is the function returns startX and endX as a list as defined in the algorithm above.
+`removeColor(pic, startx, starty, endx, endy)` is the function that will set all pixels from rows starty to endy and columns startx to endx to white.
 
 Calling the functions in the following order should clear out the text on the left as shown in the following figure.
-
+```
 columns = findVerticalBlob(pic,0,ImageWriter.getHeight(pic),0)
 removeColor(pic, columns[0],0,columns[1],ImageWriter.getHeight(pic))
- Image of the license plate with borders and text removed
+```
+![Image of the license plate with borders and text removed](sample00center.jpg)
 
-Horizontal Segmentation
+##### Subtask 03 | Horizontal Segmentation
+
 Horizontal segmentation is the first main phase of locating the numerical characters on the license plate after all the surrounding noise has been reduced. First we will try to detect the starting row and ending row of the digits and hence the name horizontal segmentation. This involves writing an algorithm that will determine the location of imaginary red lines “start” and “end” shown here (note: the red lines are for illustration only):
- Image of the license plate after Horizontal Segmentation (Red lines are only for illustration purpose)
+
+![Image of the license plate after Horizontal Segmentation (Red lines are only for illustration purpose)](sample00hzseg.jpg)
 
 This task is accomplished by treating any series of horizontal lines that have any black pixel as a “blob”. So, so let's start by looking at the following figure:
- Image of the license plate with borders and text removed
+![Image of the license plate with borders and text removed](sample00center.jpg)
+
 If we start at the top of the image, there are a few horizontal lines that are all white. Then there is some text which is made up of a group of lines where each line has some black in it. This is followed by another small group of white lines and then some text and then a few empty rows. So in all we have two blobs on the image. If there is some noise in the image, then we might get more than three blobs. For example, consider the following figure:
-License plate with some noisy data
+
+![License plate with some noisy data](sample00noisy.jpg)
+
 The image in this figure will result in 4 blobs. One extra blob because of thin line at the top and one because of the line at the bottom.
-
 Our goal is to find the biggest blob. The following algorithm outlines our methodology for finding the biggest horizontal blob.
-
+```
 #initialize variables
 inBlob := False
 startOfBlob := 0
@@ -128,22 +136,27 @@ Loop through all rows of the image
         result = [startOfBlob,current row]
         maxBlob  = size of this blob
 End Loop
-Task 4 Write a function called horizontalSegmentation(pic). This function takes an image that does not have any borders as input argument. This function should determine the position of the numbers on the license plate and send the top and bottom of the area of license plate that holds the numbers. This information should be returned as a list of the format [top, bottom]
+```
 
-Vertical Segmentation
-Once we have the numerical segments located, we will do the rest of the work with only this segment. Our task now is to figure out the location (start and end) of each of the digits in this vertical blob. For vertical segmentation, we start from the left most column of the image and step through each column. For each column we analyze each pixel in this column. In the beginning we will find that all pixels are white. As soon as we hit the first digit, the color will change to black. The first time we collect a black pixel we mark it the start of the digit and then keep on searching until we see a column that is all white. This would mark the end of this digit. We repeat this step six times, each time starting from the end of the last digit in order to search for the next digit. The function we wrote earlier, findVerticalBlob can do this task as long as we pass in the correct values of startRow, endRow, startColumn. In this case, startRow and endRow will be the limits we obtained from the horizontalSegmentation function and startColumn should be the end of the previous digit.
+`horizontalSegmentation(pic)` is the function that takes an image that does not have any borders as input argument. This function should determine the position of the numbers on the license plate and send the top and bottom of the area of license plate that holds the numbers. This information should be returned as a list of the format [top, bottom]
 
-Decoding a Digit
+##### Subtask 04 | Vertical Segmentation
+
+Once we have the numerical segments located, we will do the rest of the work with only this segment. Our task now is to figure out the location (start and end) of each of the digits in this vertical blob. For vertical segmentation, we start from the left most column of the image and step through each column. For each column we analyze each pixel in this column. In the beginning we will find that all pixels are white. As soon as we hit the first digit, the color will change to black. The first time we collect a black pixel we mark it the start of the digit and then keep on searching until we see a column that is all white. This would mark the end of this digit. We repeat this step six times, each time starting from the end of the last digit in order to search for the next digit. The function we wrote earlier, `findVerticalBlob` can do this task as long as we pass in the correct values of startRow, endRow, startColumn. In this case, startRow and endRow will be the limits we obtained from the `horizontalSegmentation` function and startColumn should be the end of the previous digit.
+
+##### Subtask 05 | Decoding a Digit
 Now that we have isolated each digit, recognizing each digit is a simple feature extraction and statistical analysis task. Feature extraction is just a fancy name for a simple process described below. Let’s take digit three as an example, we take this digit and divide it in four quadrants as shown:
-Digit 3 divided into four quadrants
+
+![Digit 3 divided into four quadrants](three.jpg)
 
 Now we calculate the percentage of black pixels in each quadrant of the digit. Percentage of black is taken by counting all black pixels in a quadrant and dividing it by the total number of pixels in the quadrant. We do this step for each of the four quadrants. Once we have these values for each quadrant, we compare with the measured value for each digit as shown in the table below. The values that match most closely is our prediction for this digit. Remember that just like in math, the top right quadrant is the first quadrant, the top left is the quadrant 2, and the rest follow counter clock-wise.
 
-Digit	Q1	Q2	Q3	Q4
-0	0.49	0.51	0.52	0.48
-1	0.72	0.34	0.005	0.69
-2	0.54	0.30	0.51	0.34
-3	0.50	0.24	0.22	0.47
+| Digit | Q1 |	Q2	| Q3	| Q4 |
+| --- | --- | --- | --- | ---|
+| 0   | 0.49	| 0.51	| 0.52	| 0.48 |
+| 1	| 0.72	| 0.34	| 0.005	| 0.69 |
+| 2   | 0.54	| 0.30	| 0.51	| 0.34 |
+| 3   | 0.50	| 0.24	| 0.22	| 0.47 |
 4	0.16	0.28	0.41	0.52
 5	0.35	0.69	0.32	0.46
 6	0.41	0.64	0.54	0.52
