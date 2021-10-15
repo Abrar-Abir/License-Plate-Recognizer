@@ -2,7 +2,7 @@
 
 ### An image processing algorithm to extract license number from license plate images using statistical analysis.
 
-##### Cops!
+##### Abstract
 
 As traffic accidents increase due to over speeding and other traffic violations, it becomes important for law enforcement agencies to find technological solutions to detect these violations. In many countries, the government has placed high resolution cameras on various roads and highways that detect speeding motorists and take a picture of their vehicles. These images are then processed to detect the license plate numbers and issue tickets accordingly.
 
@@ -15,7 +15,7 @@ This homework needs the ImageWriter Library that uses 'OpenCV' [the library can 
 Before we can start processing a license plate, it is important for us to reduce the number of colors in the image. This process of color reduction is called normalization and we can do this by converting the image to black and white. This process helps us reduce the amount of information that we have to process. So the first step is to convert this colored image to a black and white image. We take each pixel of the image and if the average proportion of all three values: R, G and B is less than some arbitary value (e.g., 85 or 100), we set the colors to 0 otherwise we set each component to 255.
 
 The following function is used to convert a picture to black and white:
-`
+```
 def convertBlackWhite(pic):
    rows = ImageWriter.getHeight(pic)
    columns = ImageWriter.getWidth(pic)
@@ -26,10 +26,10 @@ def convertBlackWhite(pic):
          ImageWriter.setColor(pic,j,i,[255,255,255])
       else:
          ImageWriter.setColor(pic,j,i,[0,0,0]
-         `
+```
 Here is an image of a Qatari license plate without any processing
 
- A regular Qatari license plate
+![A regular Qatari license plate](sample00.jpg)
 
 After converting the image to Black&White, it should look similar to the following image
 
