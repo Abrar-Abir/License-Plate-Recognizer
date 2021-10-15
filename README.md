@@ -107,6 +107,7 @@ Horizontal segmentation is the first main phase of locating the numerical charac
 ![Image of the license plate after Horizontal Segmentation (Red lines are only for illustration purpose)](sample00hzseg.jpg)
 
 This task is accomplished by treating any series of horizontal lines that have any black pixel as a “blob”. So, so let's start by looking at the following figure:
+
 ![Image of the license plate with borders and text removed](sample00center.jpg)
 
 If we start at the top of the image, there are a few horizontal lines that are all white. Then there is some text which is made up of a group of lines where each line has some black in it. This is followed by another small group of white lines and then some text and then a few empty rows. So in all we have two blobs on the image. If there is some noise in the image, then we might get more than three blobs. For example, consider the following figure:
@@ -157,12 +158,13 @@ Now we calculate the percentage of black pixels in each quadrant of the digit. P
 | 1	| 0.72	| 0.34	| 0.005	| 0.69 |
 | 2   | 0.54	| 0.30	| 0.51	| 0.34 |
 | 3   | 0.50	| 0.24	| 0.22	| 0.47 |
-4	0.16	0.28	0.41	0.52
-5	0.35	0.69	0.32	0.46
-6	0.41	0.64	0.54	0.52
-7	0.59	0.32	0.37	0.08
-8	0.54	0.54	0.51	0.51
-9	0.53	0.54	0.39	0.62
+| 4	| 0.16	| 0.28	| 0.41	| 0.52 |
+| 5	| 0.35	| 0.69	| 0.32	| 0.46 |
+| 6	| 0.41	| 0.64	| 0.54	| 0.52 |
+| 7	| 0.59	| 0.32	| 0.37	| 0.08 |
+| 8	| 0.54	| 0.54	| 0.51	| 0.51 |
+| 9	| 0.53	| 0.54	| 0.39	| 0.62 |
+
 We use statistical analysis for pixel matching. This is again a fancy word for the following algorithm. The table shows measured values for percentage of black pixels in each quadrant of each digit. For example, the fourth row in the table shows the percentages for digit 3. As can be seen from the figure of digit three above, and the table, there is a high number of black pixels in Quadrant 1, and the corresponding percentage is 50% in the table. Quadrant 3 has fewer black pixels and the corresponding percentage in Table 1 is 22%.
 
 Also notice that several quadrants have very similar percentages for different digits. For example, in Quadrant 1, the percentage of digit 0 and 8 are very similar. Hence we have to use the knowledge of all four quadrants to determine the digits. We use the following statistical method: Let’s say we have a digit that we are trying to decode. We take this digit’s Q1 value, and subtract it from Q1 value for each digit. This shows us how close the two values are. If the difference is small, then the value are similar otherwise they are different. We divide this difference by 4 since we have four quadrants. We repeat this step for all four quadrants and add the results for each digit. The digit with the minimum overall difference most closely matches the sample digits and is our estimation for this digit.
